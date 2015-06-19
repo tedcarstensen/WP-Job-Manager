@@ -1,19 +1,11 @@
 <?php if ( $apply = get_the_job_application_method() ) :
-	wp_enqueue_script( 'wp-job-manager-job-application' );
+	if ( $apply->type === 'url' ) {
+	    $application_href = $apply->url;
+	} elseif ( $apply->type === 'email' ) {
+	    $application_href = sprintf( 'mailto:%1$s%2$s', $apply->email, '?subject=' . rawurlencode( $apply->subject )  );
+	}
 	?>
-	<div class="job_application application">
-		<?php do_action( 'job_application_start', $apply ); ?>
-		
-		<input type="button" class="application_button button" value="<?php _e( 'Apply for job', 'wp-job-manager' ); ?>" />
-		
-		<div class="application_details">
-			<?php
-				/**
-				 * job_manager_application_details_email or job_manager_application_details_url hook
-				 */
-				do_action( 'job_manager_application_details_' . $apply->type, $apply );
-			?>
-		</div>
-		<?php do_action( 'job_application_end', $apply ); ?>
+	<div class="application">
+		<a class="application_button button" href="<?php echo $application_href; ?>"><?php _e( 'Apply for job', 'wp-job-manager' ); ?></a>
 	</div>
 <?php endif; ?>

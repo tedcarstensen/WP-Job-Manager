@@ -256,8 +256,9 @@ class WP_Job_Manager_Form_Submit_Job extends WP_Job_Manager_Form {
 						$check_value = array_filter( array( $values[ $group_key ][ $key ] ) );
 					}
 					if ( ! empty( $check_value ) ) {
-						$file_url = current( explode( '?', $file_url ) );
 						foreach ( $check_value as $file_url ) {
+							$file_url = current( explode( '?', $file_url ) );
+
 							if ( ( $info = wp_check_filetype( $file_url ) ) && ! in_array( $info['type'], $field['allowed_mime_types'] ) ) {
 								throw new Exception( sprintf( __( '"%s" (filetype %s) needs to be one of the following file types: %s', 'wp-job-manager' ), $field['label'], $info['ext'], implode( ', ', array_keys( $field['allowed_mime_types'] ) ) ) );
 							}
@@ -537,21 +538,17 @@ class WP_Job_Manager_Form_Submit_Job extends WP_Job_Manager_Form {
 					// Must be absolute
 					if ( is_array( $values[ $group_key ][ $key ] ) ) {
 						foreach ( $values[ $group_key ][ $key ] as $file_url ) {
-							if ( strstr( $file_url, WP_CONTENT_URL ) ) {
-								$maybe_attach[] = str_replace( WP_CONTENT_URL, WP_CONTENT_DIR, $file_url );
-							}
+							$maybe_attach[] = str_replace( array( WP_CONTENT_URL, site_url() ), array( WP_CONTENT_DIR, ABSPATH ), $file_url );
 						}
 					} else {
-						if ( strstr( $values[ $group_key ][ $key ], WP_CONTENT_URL ) ) {
-							$maybe_attach[] = str_replace( WP_CONTENT_URL, WP_CONTENT_DIR, $values[ $group_key ][ $key ] );
-						}
+						$maybe_attach[] = str_replace( array( WP_CONTENT_URL, site_url() ), array( WP_CONTENT_DIR, ABSPATH ), $values[ $group_key ][ $key ] );
 					}
 				}
 			}
 		}
 
 		// Handle attachments
-		if ( sizeof( $maybe_attach ) ) {
+		if ( sizeof( $maybe_attach ) && apply_filters( 'job_manager_attach_uploaded_files', true ) ) {
 			/** WordPress Administration Image API */
 			include_once( ABSPATH . 'wp-admin/includes/image.php' );
 
@@ -561,7 +558,7 @@ class WP_Job_Manager_Form_Submit_Job extends WP_Job_Manager_Form {
 
 			// Loop attachments already attached to the job
 			foreach ( $attachments as $attachment_key => $attachment ) {
-				$attachment_urls[] = str_replace( WP_CONTENT_URL, WP_CONTENT_DIR, wp_get_attachment_url( $attachment ) );
+				$attachment_urls[] = str_replace( array( WP_CONTENT_URL, site_url() ), array( WP_CONTENT_DIR, ABSPATH ), wp_get_attachment_url( $attachment ) );
 			}
 
 			foreach ( $maybe_attach as $attachment_url ) {

@@ -241,7 +241,7 @@ class WP_Job_Manager_Form_Submit_Job extends WP_Job_Manager_Form {
 					if ( is_array( $values[ $group_key ][ $key ] ) ) {
 						$check_value = $values[ $group_key ][ $key ];
 					} else {
-						$check_value = array( $values[ $group_key ][ $key ] );
+						$check_value = empty( $values[ $group_key ][ $key ] ) ? array() : array( $values[ $group_key ][ $key ] );
 					}
 					foreach ( $check_value as $term ) {
 						if ( ! term_exists( $term, $field['taxonomy'] ) ) {
@@ -547,10 +547,13 @@ class WP_Job_Manager_Form_Submit_Job extends WP_Job_Manager_Form {
 			}
 		}
 
+		$maybe_attach = array_filter( $maybe_attach );
+
 		// Handle attachments
 		if ( sizeof( $maybe_attach ) && apply_filters( 'job_manager_attach_uploaded_files', true ) ) {
 			/** WordPress Administration Image API */
 			include_once( ABSPATH . 'wp-admin/includes/image.php' );
+			include_once( ABSPATH . 'wp-admin/includes/media.php' );
 
 			// Get attachments
 			$attachments     = get_posts( 'post_parent=' . $this->job_id . '&post_type=attachment&fields=ids&post_mime_type=image&numberposts=-1' );
@@ -612,8 +615,8 @@ class WP_Job_Manager_Form_Submit_Job extends WP_Job_Manager_Form {
 			?>
 			<form method="post" id="job_preview" action="<?php echo esc_url( $action ); ?>">
 				<div class="job_listing_preview_title">
-					<input type="submit" name="continue" id="job_preview_submit_button" class="button" value="<?php echo apply_filters( 'submit_job_step_preview_submit_text', __( 'Submit Listing', 'wp-job-manager' ) ); ?>" />
-					<input type="submit" name="edit_job" class="button" value="<?php _e( 'Edit listing', 'wp-job-manager' ); ?>" />
+					<input type="submit" name="continue" id="job_preview_submit_button" class="button job-manager-button-submit-listing" value="<?php echo apply_filters( 'submit_job_step_preview_submit_text', __( 'Submit Listing', 'wp-job-manager' ) ); ?>" />
+					<input type="submit" name="edit_job" class="button job-manager-button-edit-listing" value="<?php _e( 'Edit listing', 'wp-job-manager' ); ?>" />
 					<input type="hidden" name="job_id" value="<?php echo esc_attr( $this->job_id ); ?>" />
 					<input type="hidden" name="step" value="<?php echo esc_attr( $this->step ); ?>" />
 					<input type="hidden" name="job_manager_form" value="<?php echo $this->form_name; ?>" />
@@ -658,6 +661,8 @@ class WP_Job_Manager_Form_Submit_Job extends WP_Job_Manager_Form {
 				$update_job['post_status']   = get_option( 'job_manager_submission_requires_approval' ) ? 'pending' : 'publish';
 				$update_job['post_date']     = current_time( 'mysql' );
 				$update_job['post_date_gmt'] = current_time( 'mysql', 1 );
+				$update_job['post_author']   = get_current_user_id();
+
 				wp_update_post( $update_job );
 			}
 

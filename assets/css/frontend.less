@@ -39,7 +39,7 @@
 	margin: 0 0 2em !important;
 	position: relative;
 	background-color: lighten(@secondary,5%);
-	color: $secondarytext;
+	color: @secondarytext;
 	border-top: 3px solid @primary;
 	list-style: none outside !important;
 	width: auto;
@@ -478,6 +478,9 @@ ul.job_listings {
 			.display-icon;
 			content: '\e80e';
 		}
+	}
+	.job_description {
+		margin: 0 0 1.5em;
 	}
 }
 .job-manager-application-wrapper {

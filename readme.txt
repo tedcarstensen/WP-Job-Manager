@@ -1,10 +1,9 @@
 === WP Job Manager ===
 Contributors: mikejolley, automattic
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=mike.jolley@me.com&currency_code=&amount=&return=&item_name=Buy+me+a+coffee+for+A+New+Job+Board+Plugin+for+WordPress
 Tags: job manager, job listing, job board, job management, job lists, job list, job, jobs, company, hiring, employment, employer, employees, candidate, freelance, internship, job listings, positions, board, application, hiring, listing, manager, recruiting, recruitment, talent
 Requires at least: 4.1
-Tested up to: 4.3
-Stable tag: 1.23.9
+Tested up to: 4.4
+Stable tag: 1.23.13
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -16,7 +15,7 @@ WP Job Manager is a **lightweight** job listing plugin for adding job-board like
 
 = Features =
 
-* Add, manage, and categorise job listings using the familiar WordPress UI.
+* Add, manage, and categorize job listings using the familiar WordPress UI.
 * Searchable & filterable ajax powered job listings added to your pages via shortcodes.
 * Frontend forms for guests and registered users to submit & manage job listings.
 * Allow job listers to preview their listing before it goes live. The preview matches the appearance of a live job listing.
@@ -63,13 +62,13 @@ You can get the above add-ons and several others at discount with our [Core Add-
 
 = Contributing and reporting bugs =
 
-You can contribute code to this plugin via GitHub: [https://github.com/mikejolley/wp-job-manager](https://github.com/mikejolley/wp-job-manager) and localizations via Transifex: [https://www.transifex.com/projects/p/wp-job-manager/](https://www.transifex.com/projects/p/wp-job-manager/)
+You can contribute code to this plugin via GitHub: [https://github.com/mikejolley/wp-job-manager](https://github.com/Automattic/WP-Job-Manager) and localizations via [https://translate.wordpress.org/projects/wp-plugins/wp-job-manager](https://translate.wordpress.org/projects/wp-plugins/wp-job-manager)
 
 Thanks to all of our contributors.
 
 = Support =
 
-Use the WordPress.org forums for community support where we try to help all users. If you spot a bug, you can log it (or fix it) on [Github](https://github.com/mikejolley/wp-job-manager) where we can act upon them more efficiently.
+Use the WordPress.org forums for community support where we try to help all users. If you spot a bug, you can log it (or fix it) on [Github](https://github.com/Automattic/WP-Job-Manager) where we can act upon them more efficiently.
 
 If you need help with one of our add-ons, [please raise a ticket in our help desk](https://wpjobmanager.com/support/).
 
@@ -129,7 +128,7 @@ If you'd like to learn about WordPress filters, here is a great place to start: 
 If you wish to be notified of new postings on your site you can use a plugin such as [Post Status Notifier](http://wordpress.org/plugins/post-status-notifier-lite/).
 
 = What language files are available? =
-You can view (and contribute) translations via the [Transifex project here](https://www.transifex.com/projects/p/wp-job-manager/).
+You can view (and contribute) translations via the [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/wp-job-manager).
 
 == Screenshots ==
 
@@ -141,6 +140,34 @@ You can view (and contribute) translations via the [Transifex project here](http
 6. Job listings in admin.
 
 == Changelog ==
+
+= 1.23.13 =
+* Fix - Conflict between the_job_location() and the regions plugin.
+* Tweak - Allow some HTML in the_job_location - uses wp_kses_post.
+
+= 1.23.12 =
+* Fix - Transient clear query.
+* Tweak - New user notification pluggable function.
+* Tweak - Use subquery in keyword search to avoid long queries.
+* Tweak - Only search for keywords of 2 or more characters.
+* Tweak - job_manager_get_listings_keyword_length_threshold filter.
+* Tweak - PolyLang compatibility functions.
+* Tweak - Unattach company logo when a new attachment is uploaded.
+
+= 1.23.11 =
+* Fix - Author check in job_manager_user_can_edit_job().
+* Tweak - Before deleting a job, delete its attachments.
+* Tweak - Show previews in backend if needed.
+
+= 1.23.10 =
+* Fix - Handle WP 4.3 signup notification.
+* Fix - Map mime types to those that WordPress knows.
+* Fix - Alert text color.
+* Fix - Searches containing special chars.
+* Tweak - Improved uploader error handling and updated library.
+* Tweak - Improve job_manager_user_can_post_job and job_manager_user_can_edit_job capability handling in job-submit.php
+* Tweak - Clear transients in batches of 500.
+* Tweak - Removed transifex and translations - translation will take place on https://translate.wordpress.org/projects/wp-plugins/wp-job-manager
 
 = 1.23.9 =
 * Fixed editing content with wp_editor. Can no longer be passed to function already escaped.

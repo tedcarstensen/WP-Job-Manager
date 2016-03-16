@@ -15,9 +15,17 @@ jQuery(document).ready(function($) {
 	});
 
 	// Datepicker
-	$( "input#_job_expires" ).datepicker({
-		dateFormat: 'yy-mm-dd',
-		minDate: 0
+	$( 'input.job-manager-datepicker, input#_job_expires' ).datepicker({
+		altFormat  : 'yy-mm-dd',
+		dateFormat : job_manager_admin.date_format,
+		minDate    : 0
+	});
+
+	$( 'input.job-manager-datepicker, input#_job_expires' ).each( function(){
+		if ( $(this).val() ) {
+			var date = new Date( $(this).val() );
+			$(this).datepicker( "setDate", date );
+		}
 	});
 
 	// Uploading files

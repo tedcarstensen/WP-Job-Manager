@@ -32,23 +32,29 @@ abstract class WP_Job_Manager_Form {
 	 * Process function. all processing code if needed - can also change view if step is complete
 	 */
 	public function process() {
-		$keys = array_keys( $this->steps );
+		$step_key = $this->get_step_key( $this->step );
 
-		if ( isset( $keys[ $this->step ] ) && is_callable( $this->steps[ $keys[ $this->step ] ]['handler'] ) ) {
-			call_user_func( $this->steps[ $keys[ $this->step ] ]['handler'] );
+		if ( $step_key && is_callable( $this->steps[ $step_key ]['handler'] ) ) {
+			call_user_func( $this->steps[ $step_key ]['handler'] );
+		}
+
+		$next_step_key = $this->get_step_key( $this->step );
+
+		// if the step changed, but the next step has no 'view', call the next handler in sequence.
+		if ( $next_step_key && $step_key !== $next_step_key && ! is_callable( $this->steps[ $next_step_key ]['view'] ) ) {
+			$this->process();
 		}
 	}
 
 	/**
-	 * output function. Call the view handler.
+	 * Call the view handler if set, otherwise call the next handler.
 	 */
 	public function output( $atts = array() ) {
-		$keys = array_keys( $this->steps );
-
+		$step_key = $this->get_step_key( $this->step );
 		$this->show_errors();
 
-		if ( isset( $keys[ $this->step ] ) && is_callable( $this->steps[ $keys[ $this->step ] ]['view'] ) ) {
-			call_user_func( $this->steps[ $keys[ $this->step ] ]['view'], $atts );
+		if ( $step_key && is_callable( $this->steps[ $step_key ]['view'] ) ) {
+			call_user_func( $this->steps[ $step_key ]['view'], $atts );
 		}
 	}
 
@@ -80,10 +86,47 @@ abstract class WP_Job_Manager_Form {
 	}
 
 	/**
+	 * Get formn name.
+	 * @since 1.24.0
+	 * @return string
+	 */
+	public function get_form_name() {
+		return $this->form_name;
+	}
+
+	/**
+	 * Get steps from outside of the class
+	 * @since 1.24.0
+	 */
+	public function get_steps() {
+		return $this->steps;
+	}
+
+	/**
 	 * Get step from outside of the class
 	 */
 	public function get_step() {
 		return $this->step;
+	}
+
+	/**
+	 * Get step key from outside of the class
+	 * @since 1.24.0
+	 */
+	public function get_step_key( $step = '' ) {
+		if ( ! $step ) {
+			$step = $this->step;
+		}
+		$keys = array_keys( $this->steps );
+		return isset( $keys[ $step ] ) ? $keys[ $step ] : '';
+	}
+
+	/**
+	 * Get step from outside of the class
+	 * @since 1.24.0
+	 */
+	public function set_step( $step ) {
+		$this->step = absint( $step );
 	}
 
 	/**
@@ -176,11 +219,6 @@ abstract class WP_Job_Manager_Form {
 	 * @return array|string $value The sanitized array (or string from the callback).
 	 */
 	protected function sanitize_posted_field( $value ) {
-		// Decode URLs
-		if ( is_string( $value ) && ( strstr( $value, 'http:' ) || strstr( $value, 'https:' ) ) ) {
-			$value = urldecode( $value );
-		}
-
 		// Santize value
 		$value = is_array( $value ) ? array_map( array( $this, 'sanitize_posted_field' ), $value ) : sanitize_text_field( stripslashes( trim( $value ) ) );
 
